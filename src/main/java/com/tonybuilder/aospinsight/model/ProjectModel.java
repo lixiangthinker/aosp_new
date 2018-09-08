@@ -3,6 +3,7 @@ package com.tonybuilder.aospinsight.model;
 public class ProjectModel {
     private Integer projectId;
     private String projectName;
+    private String projectTableName;
     private Double projectTotalLines;
     private String projectLastSubmitData;
     private Byte projectIsExternalSrc;
@@ -24,6 +25,14 @@ public class ProjectModel {
 
     public void setProjectName(String projectName) {
         this.projectName = projectName;
+    }
+
+    public String getProjectTableName() {
+        return projectTableName;
+    }
+
+    public void setProjectTableName(String projectTableName) {
+        this.projectTableName = projectTableName;
     }
 
     public Double getProjectTotalLines() {

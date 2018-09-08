@@ -128,6 +128,13 @@ public class JGitParser {
         List<CommitModel> result = new ArrayList<>();
         CommitModel c;
 
+        String projectDir = getProjectDirByName(projectName);
+        File dir = new File(projectDir);
+        if (!dir.exists() || !dir.isDirectory()) {
+            System.out.println("project dir is not exist: " + projectName);
+            return result;
+        }
+
         try (Repository repository = openJGitRepository(getProjectDirByName(projectName))) {
             try (Git git = new Git(repository)) {
                 LogCommand cmd = git.log().setRevFilter(RevFilter.NO_MERGES);

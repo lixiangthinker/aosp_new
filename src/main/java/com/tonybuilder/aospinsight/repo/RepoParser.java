@@ -53,6 +53,7 @@ public class RepoParser {
                 project.setProjectIsExternalSrc(isExternalProject(project));
                 project.setProjectIsDiscarded(isProjectDiscarded(project));
                 project.setProjectModuleType(getProjectModuleType(project));
+                project.setProjectTableName(GlobalSettings.getCommitTableName(project.getProjectName()));
                 result.add(project);
             }
         } catch (DocumentException e) {

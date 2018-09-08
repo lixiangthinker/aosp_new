@@ -94,7 +94,11 @@ public class ParseRepoService {
         } catch (GitAPIException e) {
             e.printStackTrace();
         }
-        //commitsParser.getGitLogForSingleRepo(path, "2018-07-01", true);
+        if (list == null) {
+            System.out.println("could not parse project " + projectName);
+            return false;
+        }
+
         System.out.println("list.size() " + list.size());
 
         int listSize = list.size();
@@ -103,16 +107,18 @@ public class ParseRepoService {
             List<CommitModel> subList = list.subList(begin, end);
             commitMapper.addCommitList(subList, GlobalSettings.getCommitTableName(projectName));
         }
-//        list.subList()
-//        if (list.size() != 0) {
-//            commitMapper.addCommitList(list, GlobalSettings.getCommitTableName(projectName));
-//        }
         return true;
     }
 
-    public boolean parseAllCommit() {
-        //TODO
+    public boolean parseAllCommit(Date since) {
         //commitsParser.getGitLogForAllRepo("2018-07-01");
+        List<ProjectModel> listProject = projectMapper.getProjectList();
+        if (listProject == null) {
+            return false;
+        }
+        for (ProjectModel project : listProject) {
+            parseCommit(project.getProjectName(), since);
+        }
         return false;
     }
 }

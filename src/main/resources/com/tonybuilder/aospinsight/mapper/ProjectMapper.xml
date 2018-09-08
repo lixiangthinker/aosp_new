@@ -5,6 +5,7 @@
 		CREATE TABLE IF NOT EXISTS ${tableName} (
               `project_id` int(11) NOT NULL AUTO_INCREMENT,
               `project_name` varchar(512) NOT NULL,
+              `project_table_name` varchar(512) DEFAULT NULL,
               `project_total_lines` double DEFAULT '0',
               `project_last_submit_data` varchar(45) DEFAULT NULL,
               `project_is_external_src` tinyint(4) DEFAULT '0',
@@ -25,6 +26,7 @@
 
     <sql id="all_volumes">
         project_name,
+        project_table_name,
         project_total_lines,
         project_last_submit_data,
         project_is_external_src,
@@ -36,6 +38,7 @@
     <sql id="on_duplicate_key_update">
     on duplicate key update
         project_name = VALUES(project_name),
+        project_table_name = VALUES(project_table_name),
         project_total_lines = VALUES(project_total_lines),
         project_last_submit_data = VALUES(project_last_submit_data),
         project_is_external_src = VALUES(project_is_external_src),
@@ -46,6 +49,7 @@
     <insert id="addProject" parameterType="ProjectModel">
         insert into tbl_project(<include refid="all_volumes"/>)
                 values(#{projectName},
+                        #{projectTableName},
                         #{projectTotalLines},
                         #{projectLastSubmitData},
                         #{projectIsExternalSrc},
@@ -73,6 +77,7 @@
         <foreach collection="list" item="projectModel" index="index" separator=",">
             (
             #{projectModel.projectName,jdbcType=VARCHAR},
+            #{projectModel.projectTableName,jdbcType=VARCHAR},
             #{projectModel.projectTotalLines,jdbcType=DOUBLE},
             #{projectModel.projectLastSubmitData,jdbcType=VARCHAR},
             #{projectModel.projectIsExternalSrc,jdbcType=TINYINT},
