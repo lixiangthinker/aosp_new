@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.tonybuilder.aospinsight.mapper.ProjectSummaryMapper">
-
-    <select id="getProjectSummaryByName" resultType="ProjectSummaryModel" parameterType="ProjectModel">
-        select * from project_summary where project_summary_orig_id=#{projectId}
+    <update id="createNewTable" parameterType="String">
+		CREATE TABLE IF NOT EXISTS ${tableName} (
+            `project_summary_id` int(11) NOT NULL AUTO_INCREMENT,
+            `project_summary_orig_id` int(11) DEFAULT '0',
+            `project_summary_added` int(11) DEFAULT '0',
+            `project_summary_deleted` int(11) DEFAULT '0',
+            `project_summary_total` int(11) DEFAULT '0',
+            `project_summary_since` datetime DEFAULT NULL,
+            `project_summary_until` datetime DEFAULT NULL,
+            PRIMARY KEY (`project_summary_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+	</update>
+    <select id="existTable" parameterType="String" resultType="Integer">
+        select count(*) from information_schema.TABLES where table_name = #{tableName}
+	</select>
+    <update id="dropTable">
+        drop table ${tableName}
+    </update>
+    <select id="getProjectSummaryByDate" resultType="ProjectSummaryModel">
+        <![CDATA[ select * from project_summary where project_summary_since >=#{since} and project_summary_until <=#{until}]]>
     </select>
 
     <select id="getProjectSummary" resultType="ProjectSummaryModel">

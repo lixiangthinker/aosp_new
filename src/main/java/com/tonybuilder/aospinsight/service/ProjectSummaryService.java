@@ -1,11 +1,11 @@
 package com.tonybuilder.aospinsight.service;
 
 import com.tonybuilder.aospinsight.mapper.ProjectSummaryMapper;
-import com.tonybuilder.aospinsight.model.ProjectModel;
 import com.tonybuilder.aospinsight.model.ProjectSummaryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -17,8 +17,8 @@ public class ProjectSummaryService {
         this.projectSummaryMapper = mapper;
     }
 
-    public List<ProjectSummaryModel> getProjectSummaryByName(ProjectModel projectModel) {
-        return projectSummaryMapper.getProjectSummaryByName(projectModel);
+    public List<ProjectSummaryModel> getProjectSummaryByDate(Date since, Date until) {
+        return projectSummaryMapper.getProjectSummaryByDate(since, until);
     }
 
     public List<ProjectSummaryModel> getProjectSummary() {

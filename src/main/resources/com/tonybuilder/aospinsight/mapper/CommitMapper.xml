@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tonybuilder.aospinsight.mapper.CommitMapper">
+    <update id="createNewTable" parameterType="String">
+		CREATE TABLE IF NOT EXISTS ${tableName} (
+                           `commit_id` int(11) NOT NULL AUTO_INCREMENT,
+                           `commit_in_project` int(11) DEFAULT '0',
+                            `commit_author` varchar(200) NOT NULL,
+                            `commit_author_mail` varchar(200) NOT NULL,
+                            `commit_alter_date` datetime DEFAULT NULL,
+                            `commit_hash_id` varchar(45) DEFAULT NULL,
+                            `commit_submit_date` datetime DEFAULT NULL,
+                            `commit_added_lines` int(11) DEFAULT '0',
+                            `commit_deleted_lines` int(11) DEFAULT '0',
+                            `commit_branch` varchar(100) DEFAULT 'master',
+                            `commit_changed_lines` int(11) DEFAULT '0',
+                            `commit_log` longtext,
+                            PRIMARY KEY (`commit_id`),
+                            UNIQUE KEY `commit_id_UNIQUE` (`commit_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+	</update>
+    <select id="existTable" parameterType="String" resultType="Integer">
+        select count(*) from information_schema.TABLES where table_name = #{tableName}
+	</select>
+    <update id="dropTable">
+        drop table ${tableName}
+    </update>
+
+    <sql id="all_volumes">
+        commit_in_project,
+        commit_author,
+        commit_author_mail,
+        commit_alter_date,
+        commit_hash_id,
+        commit_submit_date,
+        commit_added_lines,
+        commit_deleted_lines,
+        commit_branch,
+        commit_changed_lines,
+        commit_log
+    </sql>
+
+    <sql id="on_duplicate_key_update">
+    on duplicate key update
+        commit_in_project = VALUES(commit_in_project),
+        commit_author = VALUES(commit_author),
+        commit_author_mail = VALUES(commit_author_mail),
+        commit_alter_date = VALUES(commit_alter_date),
+        commit_hash_id = VALUES(commit_hash_id),
+        commit_submit_date = VALUES(commit_submit_date),
+        commit_added_lines = VALUES(commit_added_lines),
+        commit_deleted_lines = VALUES(commit_deleted_lines),
+        commit_branch = VALUES(commit_branch),
+        commit_changed_lines = VALUES(commit_changed_lines),
+        commit_log = VALUES(commit_log)
+    </sql>
+    <insert id="addCommit" parameterType="CommitModel">
+        insert into ${tableName}(<include refid="all_volumes"/>)
+        values(#{commit.commitInProject},
+        #{commit.commitAuthor},
+        #{commit.commitAuthorMail},
+        #{commit.commitAlterDate},
+        #{commit.commitHashId},
+        #{commit.commitSubmitDate},
+        #{commit.commitAddedLines},
+        #{commit.commitDeletedLines},
+        #{commit.commitBranch},
+        #{commit.commitChangedLines},
+        #{commit.commitLog})
+        <include refid="on_duplicate_key_update"/>
+    </insert>
+
+    <insert id="addCommitList" parameterType="java.util.List">
+        insert into ${tableName}(<include refid="all_volumes"/>)
+        values
+        <foreach collection="commitList" item="commitModel" index="index" separator=",">
+            (
+            #{commitModel.commitInProject,jdbcType=INTEGER},
+            #{commitModel.commitAuthor,jdbcType=VARCHAR},
+            #{commitModel.commitAuthorMail,jdbcType=VARCHAR},
+            #{commitModel.commitAlterDate,jdbcType=TIMESTAMP},
+            #{commitModel.commitHashId,jdbcType=VARCHAR},
+            #{commitModel.commitSubmitDate,jdbcType=TIMESTAMP},
+            #{commitModel.commitAddedLines,jdbcType=INTEGER},
+            #{commitModel.commitDeletedLines,jdbcType=INTEGER},
+            #{commitModel.commitBranch,jdbcType=VARCHAR},
+            #{commitModel.commitChangedLines,jdbcType=INTEGER},
+            #{commitModel.commitLog,jdbcType=LONGVARCHAR}
+            )
+        </foreach>
+        <include refid="on_duplicate_key_update"/>
+    </insert>
+</mapper>

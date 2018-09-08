@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tonybuilder.aospinsight.mapper.ProjectMapper">
+    <update id="createNewTable" parameterType="String">
+		CREATE TABLE IF NOT EXISTS ${tableName} (
+              `project_id` int(11) NOT NULL AUTO_INCREMENT,
+              `project_name` varchar(512) NOT NULL,
+              `project_total_lines` double DEFAULT '0',
+              `project_last_submit_data` varchar(45) DEFAULT NULL,
+              `project_is_external_src` tinyint(4) DEFAULT '0',
+              `project_module_type` int(11) DEFAULT '0',
+              `project_is_discarded` tinyint(4) DEFAULT '0',
+              `project_path` varchar(512) DEFAULT NULL,
+              PRIMARY KEY (`project_id`),
+              UNIQUE KEY `project_name_UNIQUE` (`project_name`),
+              UNIQUE KEY `project_id_UNIQUE` (`project_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+	</update>
+    <select id="existTable" parameterType="String" resultType="Integer">
+        select count(*) from information_schema.TABLES where table_name = #{tableName}
+	</select>
+    <update id="dropTable">
+        drop table ${tableName}
+    </update>
+
+    <sql id="all_volumes">
+        project_name,
+        project_total_lines,
+        project_last_submit_data,
+        project_is_external_src,
+        project_module_type,
+        project_is_discarded,
+        project_path
+    </sql>
+
+    <sql id="on_duplicate_key_update">
+    on duplicate key update
+        project_name = VALUES(project_name),
+        project_total_lines = VALUES(project_total_lines),
+        project_last_submit_data = VALUES(project_last_submit_data),
+        project_is_external_src = VALUES(project_is_external_src),
+        project_module_type = VALUES(project_module_type),
+        project_is_discarded = VALUES(project_is_discarded),
+        project_path = VALUES(project_path)
+    </sql>
+    <insert id="addProject" parameterType="ProjectModel">
+        insert into tbl_project(<include refid="all_volumes"/>)
+                values(#{projectName},
+                        #{projectTotalLines},
+                        #{projectLastSubmitData},
+                        #{projectIsExternalSrc},
+                        #{projectModuleType},
+                        #{projectIsDiscarded},
+                        #{projectPath})
+        <include refid="on_duplicate_key_update"/>
+    </insert>
+
+    <select id="getProjectList" resultType="ProjectModel">
+        select * from tbl_project
+    </select>
+    <select id="getProjectIdByPath" resultType="Integer">
+        select project_id from tbl_project where project_path = #{path}
+    </select>
+    <select id="getProjectByPath" resultType="ProjectModel">
+        select * from tbl_project where project_path = #{path}
+    </select>
+    <select id="getProjectByName" resultType="ProjectModel">
+        select * from tbl_project where project_name = #{projectName}
+    </select>
+    <insert id="addProjectList" parameterType="java.util.List">
+        insert into tbl_project(<include refid="all_volumes"/>)
+        values
+        <foreach collection="list" item="projectModel" index="index" separator=",">
+            (
+            #{projectModel.projectName,jdbcType=VARCHAR},
+            #{projectModel.projectTotalLines,jdbcType=DOUBLE},
+            #{projectModel.projectLastSubmitData,jdbcType=VARCHAR},
+            #{projectModel.projectIsExternalSrc,jdbcType=TINYINT},
+            #{projectModel.projectModuleType,jdbcType=INTEGER},
+            #{projectModel.projectIsDiscarded,jdbcType=TINYINT},
+            #{projectModel.projectPath,jdbcType=VARCHAR}
+            )
+        </foreach>
+        <include refid="on_duplicate_key_update"/>
+    </insert>
+</mapper>

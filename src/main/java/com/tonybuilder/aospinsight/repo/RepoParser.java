@@ -9,7 +9,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -18,10 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 
 @Component
-public class AospRepoUtil {
-    private static final String AOSP_ROOT = GlobalSettings.AOSP_SOURCE_PATH_PREFIX;
-    private static final String REPO_PATH = ".repo/manifest.xml";
-    private static final String sourceRoot = AOSP_ROOT;
+public class RepoParser {
+    private static final String AOSP_ROOT = "D:\\source\\aosp";
 
     @Autowired
     private static ProjectMapper projectMapper;
@@ -32,36 +29,11 @@ public class AospRepoUtil {
 
     private final File sourceDir;
 
-    public AospRepoUtil() {
+    public RepoParser() {
         this.sourceDir = new File(AOSP_ROOT);
     }
 
-    public static void main(String[] args) {
-        AospRepoUtil repo = new AospRepoUtil();
-        File root = repo.getSourceDir();
-        if (root == null || !root.isDirectory()) {
-            return;
-        }
-
-        File manifest = new File(root, REPO_PATH);
-
-        if (!manifest.exists() || !manifest.isFile()) {
-            return;
-        }
-
-        // parse manifest, get project path and name
-        List<ProjectModel> parseResult = repo.parserXml(manifest);
-        for (ProjectModel p : parseResult) {
-            System.out.println("["+p.getProjectName()+", "+p.getProjectPath()+"]");
-        }
-
-        projectMapper.addProjectList(parseResult);
-
-        System.out.println(parseResult.size() + " projects added to database");
-        System.exit(0);
-    }
-
-    private List<ProjectModel> parserXml(File xml) {
+    public List<ProjectModel> parserXml(File xml) {
         List<ProjectModel> result = new ArrayList<>();
         SAXReader saxReader = new SAXReader();
         try {
