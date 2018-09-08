@@ -8,7 +8,7 @@
                             `commit_author` varchar(200) NOT NULL,
                             `commit_author_mail` varchar(200) NOT NULL,
                             `commit_alter_date` datetime DEFAULT NULL,
-                            `commit_hash_id` varchar(45) DEFAULT NULL,
+                            `commit_hash_id` varchar(45) NOT NULL,
                             `commit_submit_date` datetime DEFAULT NULL,
                             `commit_added_lines` int(11) DEFAULT '0',
                             `commit_deleted_lines` int(11) DEFAULT '0',
@@ -16,7 +16,8 @@
                             `commit_changed_lines` int(11) DEFAULT '0',
                             `commit_log` longtext,
                             PRIMARY KEY (`commit_id`),
-                            UNIQUE KEY `commit_id_UNIQUE` (`commit_id`)
+                            UNIQUE KEY `commit_id_UNIQUE` (`commit_id`),
+                            UNIQUE KEY `commit_hash_id_UNIQUE` (`commit_hash_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 	</update>
     <select id="existTable" parameterType="String" resultType="Integer">

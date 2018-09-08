@@ -19,7 +19,7 @@ import java.util.Locale;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CommitMapperTests {
-    private static final String TEST_TABLE = "tbl_commit_framework_base";
+    private static final String TEST_TABLE = "tbl_commit_frameworks_base";
     @Autowired
     CommitMapper mapper;
 
@@ -83,12 +83,20 @@ public class CommitMapperTests {
     @Test
     public void testAddCommitList() {
         CommitModel commit1 = getCommit();
+        commit1.setCommitLog("commit 1: commit log");
         CommitModel commit2 = getCommit();
-        commit2.setCommitLog("1234567890");
+        commit2.setCommitHashId("NOT THE SAME HASH ID");
+        commit2.setCommitLog("commit 2: commit log");
         List<CommitModel> list = new ArrayList<>();
         list.add(commit1);
         list.add(commit2);
-
         mapper.addCommitList(list, TEST_TABLE);
+
+//        CommitModel commit3 = getCommit();
+//        CommitModel sameAsCommit3 = getCommit();
+//        List<CommitModel> listWithSameCommit = new ArrayList<>();
+//        listWithSameCommit.add(commit3);
+//        listWithSameCommit.add(sameAsCommit3);
+//        mapper.addCommitList(listWithSameCommit, TEST_TABLE);
     }
 }

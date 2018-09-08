@@ -33,7 +33,7 @@ public class ParseRepoServiceTests {
     @Test
     public void testParseCommit() throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String strSince = "2017-11-01";
+        String strSince = "2018-07-01";
         Date since = sdf.parse(strSince);
         boolean result = parseRepoService.parseCommit("platform/frameworks/base", since);
     }

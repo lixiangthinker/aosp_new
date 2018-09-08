@@ -84,7 +84,7 @@ public class ParseRepoService {
 
     public boolean parseCommit(String projectName, Date since) {
         checkTableCommit(projectName);
-        String path = projectMapper.getProjectByName(projectName).getProjectPath();
+        //String path = projectMapper.getProjectByName(projectName).getProjectPath();
         List<CommitModel> list = new ArrayList<>();
         try {
             list = jGitParser.parseProject(projectName, since);
@@ -94,9 +94,18 @@ public class ParseRepoService {
             e.printStackTrace();
         }
         //commitsParser.getGitLogForSingleRepo(path, "2018-07-01", true);
-        if (list.size() != 0) {
-            commitMapper.addCommitList(list, GlobalSettings.getCommitTableName(projectName));
+        System.out.println("list.size() " + list.size());
+
+        int listSize = list.size();
+        for (int begin = 0; begin < listSize; begin += 100) {
+            int end = (begin+100)<listSize?begin+100:listSize;
+            List<CommitModel> subList = list.subList(begin, end);
+            commitMapper.addCommitList(subList, GlobalSettings.getCommitTableName(projectName));
         }
+//        list.subList()
+//        if (list.size() != 0) {
+//            commitMapper.addCommitList(list, GlobalSettings.getCommitTableName(projectName));
+//        }
         return true;
     }
 
