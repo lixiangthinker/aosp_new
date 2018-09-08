@@ -1,6 +1,5 @@
 package com.tonybuilder.aospinsight.repo;
 
-import com.tonybuilder.aospinsight.mapper.ProjectMapper;
 import com.tonybuilder.aospinsight.model.ProjectModel;
 import com.tonybuilder.aospinsight.utils.GlobalSettings;
 import org.dom4j.Attribute;
@@ -8,7 +7,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -18,19 +17,12 @@ import java.util.List;
 
 @Component
 public class RepoParser {
-    private static final String AOSP_ROOT = "D:\\source\\aosp";
 
-    @Autowired
-    private static ProjectMapper projectMapper;
+    @Value("${aosp.source.root}")
+    private String AOSP_ROOT;
 
     public File getSourceDir() {
-        return sourceDir;
-    }
-
-    private final File sourceDir;
-
-    public RepoParser() {
-        this.sourceDir = new File(AOSP_ROOT);
+        return new File(AOSP_ROOT);
     }
 
     public List<ProjectModel> parserXml(File xml) {

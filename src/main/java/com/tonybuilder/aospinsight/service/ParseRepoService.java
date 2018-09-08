@@ -69,6 +69,7 @@ public class ParseRepoService {
         File manifest = new File(root, REPO_PATH);
 
         if (!manifest.exists() || !manifest.isFile()) {
+            System.out.println("could not find manifest file");
             return false;
         }
 
