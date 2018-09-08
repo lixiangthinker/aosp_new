@@ -52,8 +52,8 @@ public class JGitParser {
 
     public String getProjectDirByName(@NotNull String projectName) {
         String projectDir = null;
-        String strProjectPath = projectName.substring("platform/".length()).replace("/","\\");
-        projectDir = SOURCE_BASE+strProjectPath+"\\.git\\";
+        String strProjectPath = projectName.substring("platform/".length()).replace("/",File.separator);
+        projectDir = SOURCE_BASE+strProjectPath+File.separator+".git"+File.separator;
         return projectDir;
     }
 
@@ -127,6 +127,7 @@ public class JGitParser {
             throws IOException, GitAPIException{
         List<CommitModel> result = new ArrayList<>();
         CommitModel c;
+
         try (Repository repository = openJGitRepository(getProjectDirByName(projectName))) {
             try (Git git = new Git(repository)) {
                 LogCommand cmd = git.log().setRevFilter(RevFilter.NO_MERGES);
