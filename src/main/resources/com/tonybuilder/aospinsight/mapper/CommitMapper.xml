@@ -99,4 +99,12 @@
         </where>
         order by commit_submit_date asc
     </select>
+
+    <select id="getCommitsSinceUntil" resultType="CommitModel">
+        select * from ${tableName}
+        <where>
+            <![CDATA[commit_submit_date >= #{since} and commit_submit_date < #{until}]]>
+        </where>
+        order by commit_submit_date asc
+    </select>
 </mapper>

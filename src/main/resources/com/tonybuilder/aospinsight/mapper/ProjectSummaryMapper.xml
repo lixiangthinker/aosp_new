@@ -10,9 +10,29 @@
             `project_summary_total` int(11) DEFAULT '0',
             `project_summary_since` datetime DEFAULT NULL,
             `project_summary_until` datetime DEFAULT NULL,
-            PRIMARY KEY (`project_summary_id`)
+            PRIMARY KEY (`project_summary_id`),
+            UNIQUE KEY `project_summary_since_UNIQUE` (`project_summary_since`),
+            UNIQUE KEY `project_summary_until_UNIQUE` (`project_summary_until`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 	</update>
+
+    <sql id="all_volumes">
+        project_summary_orig_id,
+        project_summary_added,
+        project_summary_deleted,
+        project_summary_total,
+        project_summary_since,
+        project_summary_until
+    </sql>
+    <sql id="on_duplicate_key_update">
+    on duplicate key update
+        project_summary_orig_id = VALUES(project_summary_orig_id),
+        project_summary_added = VALUES(project_summary_added),
+        project_summary_deleted = VALUES(project_summary_deleted),
+        project_summary_total = VALUES(project_summary_total),
+        project_summary_since = VALUES(project_summary_since),
+        project_summary_until = VALUES(project_summary_until)
+    </sql>
     <select id="existTable" parameterType="String" resultType="Integer">
         select count(*) from information_schema.TABLES where table_name = #{tableName}
 	</select>
@@ -20,10 +40,26 @@
         drop table ${tableName}
     </update>
     <select id="getProjectSummaryByDate" resultType="ProjectSummaryModel">
-        <![CDATA[ select * from project_summary where project_summary_since >=#{since} and project_summary_until <=#{until}]]>
+        <![CDATA[ select * from tbl_project_summary where project_summary_since >=#{since} and project_summary_until <=#{until}]]>
     </select>
 
     <select id="getProjectSummary" resultType="ProjectSummaryModel">
-        select * from project_summary
+        select * from tbl_project_summary
     </select>
+
+    <insert id="addProjectSummaryList" parameterType="java.util.List">
+        insert into tbl_project_summary (<include refid="all_volumes"/>)
+        values
+        <foreach collection="projectSummaryList" item="projectSummaryModel" index="index" separator=",">
+            (
+            #{projectSummaryModel.projectSummaryOrigId,jdbcType=INTEGER},
+            #{projectSummaryModel.projectSummaryAdded,jdbcType=INTEGER},
+            #{projectSummaryModel.projectSummaryDeleted,jdbcType=INTEGER},
+            #{projectSummaryModel.projectSummaryTotal,jdbcType=INTEGER},
+            #{projectSummaryModel.projectSummarySince,jdbcType=TIMESTAMP},
+            #{projectSummaryModel.projectSummaryUntil,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+        <include refid="on_duplicate_key_update"/>
+    </insert>
 </mapper>

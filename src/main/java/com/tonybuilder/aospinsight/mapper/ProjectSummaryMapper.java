@@ -7,10 +7,10 @@ import java.util.Date;
 import java.util.List;
 
 public interface ProjectSummaryMapper {
-    int createNewTable(@Param("tableName") String tableName);
-    int dropTable(@Param("tableName") String tableName);
-    int existTable(String tableName);
+    Integer createNewTable(@Param("tableName") String tableName);
+    Integer dropTable(@Param("tableName") String tableName);
+    Integer existTable(String tableName);
     List<ProjectSummaryModel> getProjectSummaryByDate(@Param("since") Date since, @Param("until") Date until);
     List<ProjectSummaryModel> getProjectSummary();
-    boolean addProjectSummaryList(List<ProjectSummaryModel> projectSummaryModelList);
+    Integer addProjectSummaryList(@Param("projectSummaryList") List<ProjectSummaryModel> projectSummaryList);
 }

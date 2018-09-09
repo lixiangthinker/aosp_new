@@ -14,4 +14,5 @@ public interface CommitMapper {
     Integer addCommit(@Param("commit") CommitModel commit, @Param("tableName") String tableName);
     Integer addCommitList(@Param("commitList") List<CommitModel> commitList, @Param("tableName") String tableName);
     List<CommitModel> getCommitsSince(@Param("since") Date since, @Param("tableName") String tableName);
+    List<CommitModel> getCommitsSinceUntil(@Param("since") Date since, @Param("until") Date until,@Param("tableName") String tableName);
 }

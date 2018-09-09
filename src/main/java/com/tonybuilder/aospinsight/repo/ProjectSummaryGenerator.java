@@ -9,6 +9,7 @@ import com.tonybuilder.aospinsight.model.ProjectSummaryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -29,23 +30,21 @@ public class ProjectSummaryGenerator {
         this.projectSummaryMapper = projectSummaryMapper;
     }
 
-//    public static void main(String[] args) {
-//        ProjectSummaryUtil util = new ProjectSummaryUtil();
-//        ProjectEntity project = util.projectEntityDao.getProjectByPath("frameworks/base");
-//        if (project == null) {
-//            System.out.println("could not get project.");
-//            return;
-//        }
-//
-//        YearMonth sinceDate = YearMonth.of(2017, 1);
-//        YearMonth untilDate = YearMonth.now();
-//        util.genProjectSummaryForSingleProject(project, sinceDate, untilDate);
-//        System.exit(0);
-//    }
+    private static final String TABLE_NAME = "tbl_project_summary";
+    private void checkProjectSummaryTable(){
+        if (1!=projectSummaryMapper.existTable(TABLE_NAME)) {
+            projectSummaryMapper.createNewTable(TABLE_NAME);
+        }
+    }
 
-    private boolean genProjectSummaryForSingleProject(ProjectModel project, YearMonth sinceDate, YearMonth untilDate) {
-        // get commit of each month between since and until, calculate changed lines, insert to summary table.
-        boolean result = false;
+    // get commit of each month between since and until, calculate changed lines, insert to summary table.
+    public boolean genProjectSummaryForSingleProject(@NotNull String strProject, YearMonth sinceMonth, YearMonth untilMonth) {
+        checkProjectSummaryTable();
+        ProjectModel project = projectMapper.getProjectByName(strProject);
+        if (project == null) {
+            System.out.println("could not get project " + strProject);
+            return false;
+        }
         int projectId = project.getProjectId();
         ProjectSummaryModel projectSummary = new ProjectSummaryModel();
         projectSummary.setProjectSummaryOrigId(projectId);
@@ -53,8 +52,10 @@ public class ProjectSummaryGenerator {
         List<ProjectSummaryModel> projectSummaryModels = new ArrayList<>();
 
         String tableName = project.getProjectTableName();
-        for (YearMonth month = sinceDate; month.isBefore(untilDate.plusMonths(1)); month = month.plusMonths(1)) {
-            List<CommitModel> commitList = commitMapper.getCommitsSince(DateTimeUtils.getDateFromYearMonth(month), tableName);
+        for (YearMonth month = sinceMonth; month.isBefore(untilMonth.plusMonths(1)); month = month.plusMonths(1)) {
+            List<CommitModel> commitList = commitMapper.getCommitsSinceUntil(DateTimeUtils.getDateFromYearMonth(month),
+                    DateTimeUtils.getDateFromYearMonth(month.plusMonths(1)),
+                    tableName);
 
             if (commitList == null) {
                 System.out.println("could not find commits in month: " + month);
@@ -62,7 +63,6 @@ public class ProjectSummaryGenerator {
             }
 
             NumStatInfo numStatInfo = new NumStatInfo();
-
             for (CommitModel c : commitList) {
                 numStatInfo.addInserted(c.getCommitAddedLines());
                 numStatInfo.addDeleted(c.getCommitDeletedLines());
@@ -84,6 +84,6 @@ public class ProjectSummaryGenerator {
         }
 
         projectSummaryMapper.addProjectSummaryList(projectSummaryModels);
-        return result;
+        return true;
     }
 }

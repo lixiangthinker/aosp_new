@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.YearMonth;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -74,5 +75,13 @@ public class ProjectSummaryServiceTests {
         for (ProjectSummaryModel p : result) {
             System.out.println("since = " + p.getProjectSummarySince() + " until = " + p.getProjectSummaryUntil());
         }
+    }
+
+    @Test
+    public void testGenProjectSummary() {
+        YearMonth since = YearMonth.of(2017, 1);
+        YearMonth until = YearMonth.now();
+        boolean result = projectSummaryService.genProjectSummary("platform/frameworks/base", since, until);
+        Assert.assertEquals(true, result);
     }
 }

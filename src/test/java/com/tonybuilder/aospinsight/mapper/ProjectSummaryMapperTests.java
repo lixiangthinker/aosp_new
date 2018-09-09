@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ProjectSummaryMapperTests {
-    private static final String TEST_TABLE = "tbl_project_summary_test";
+    private static final String TEST_TABLE = "tbl_project_summary";
     @Autowired
     ProjectSummaryMapper mapper;
 
@@ -27,9 +27,9 @@ public class ProjectSummaryMapperTests {
         Assert.assertNotNull(mapper);
         int result = mapper.createNewTable(TEST_TABLE);
         System.out.println("result = " + result);
-        Assert.assertEquals(1, mapper.existTable(TEST_TABLE));
+        Assert.assertEquals(1, (int) mapper.existTable(TEST_TABLE));
         result = mapper.dropTable(TEST_TABLE);
         Assert.assertEquals(0, result);
-        Assert.assertEquals(0, mapper.existTable(TEST_TABLE));
+        Assert.assertEquals(0,(int) mapper.existTable(TEST_TABLE));
     }
 }
