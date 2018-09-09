@@ -3,7 +3,7 @@ package com.tonybuilder.aospinsight.mapper;
 import com.tonybuilder.aospinsight.model.CommitModel;
 import org.apache.ibatis.annotations.Param;
 
-import java.time.YearMonth;
+import java.util.Date;
 import java.util.List;
 
 public interface CommitMapper {
@@ -13,5 +13,5 @@ public interface CommitMapper {
 
     Integer addCommit(@Param("commit") CommitModel commit, @Param("tableName") String tableName);
     Integer addCommitList(@Param("commitList") List<CommitModel> commitList, @Param("tableName") String tableName);
-    List<CommitModel> getCommitsSince(@Param("since") YearMonth since);
+    List<CommitModel> getCommitsSince(@Param("since") Date since, @Param("tableName") String tableName);
 }

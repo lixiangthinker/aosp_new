@@ -1,6 +1,7 @@
 package com.tonybuilder.aospinsight.mapper;
 
 import com.tonybuilder.aospinsight.model.CommitModel;
+import com.tonybuilder.aospinsight.repo.DateTimeUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,10 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -98,5 +103,21 @@ public class CommitMapperTests {
 //        listWithSameCommit.add(commit3);
 //        listWithSameCommit.add(sameAsCommit3);
 //        mapper.addCommitList(listWithSameCommit, TEST_TABLE);
+    }
+
+    @Test
+    public void testGetCommitSince(){
+        YearMonth yearMonth = YearMonth.of(2018, 8);
+        Date since = DateTimeUtils.getDateFromYearMonth(yearMonth);
+        System.out.println("since = " + since);
+        List<CommitModel> result = mapper.getCommitsSince(since, TEST_TABLE);
+        if (result == null) {
+            System.out.println("could not get commit");
+            return;
+        }
+        System.out.println(result.size() + " results");
+        for (CommitModel c: result) {
+            System.out.println(c.getCommitSubmitDate());
+        }
     }
 }

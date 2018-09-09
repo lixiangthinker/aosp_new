@@ -1,10 +1,11 @@
 package com.tonybuilder.aospinsight.repo;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class DateTimeUtils {
     public static Timestamp getTimestampByMonth(YearMonth month) {
@@ -23,6 +24,12 @@ public class DateTimeUtils {
         System.out.println("since = " + tsSince + " until = " + tsUntil);
         result[0] = tsSince;
         result[1] = tsUntil;
+        return result;
+    }
+
+    public static Date getDateFromYearMonth(YearMonth yearMonth) {
+        LocalDateTime localDateTime = LocalDateTime.of(yearMonth.getYear(), yearMonth.getMonth(), 1, 0, 0);
+        Date result = Date.from(localDateTime.toInstant(ZoneOffset.UTC));
         return result;
     }
 }

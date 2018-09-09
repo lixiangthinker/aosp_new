@@ -52,8 +52,9 @@ public class ProjectSummaryGenerator {
 
         List<ProjectSummaryModel> projectSummaryModels = new ArrayList<>();
 
+        String tableName = project.getProjectTableName();
         for (YearMonth month = sinceDate; month.isBefore(untilDate.plusMonths(1)); month = month.plusMonths(1)) {
-            List<CommitModel> commitList = commitMapper.getCommitsSince(month);
+            List<CommitModel> commitList = commitMapper.getCommitsSince(DateTimeUtils.getDateFromYearMonth(month), tableName);
 
             if (commitList == null) {
                 System.out.println("could not find commits in month: " + month);

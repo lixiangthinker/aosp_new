@@ -3,8 +3,8 @@
 <mapper namespace="com.tonybuilder.aospinsight.mapper.CommitMapper">
     <update id="createNewTable" parameterType="String">
 		CREATE TABLE IF NOT EXISTS ${tableName} (
-                           `commit_id` int(11) NOT NULL AUTO_INCREMENT,
-                           `commit_in_project` int(11) DEFAULT '0',
+                            `commit_id` int(11) NOT NULL AUTO_INCREMENT,
+                            `commit_in_project` int(11) DEFAULT '0',
                             `commit_author` varchar(200) NOT NULL,
                             `commit_author_mail` varchar(200) NOT NULL,
                             `commit_alter_date` datetime DEFAULT NULL,
@@ -91,4 +91,12 @@
         </foreach>
         <include refid="on_duplicate_key_update"/>
     </insert>
+
+    <select id="getCommitsSince" resultType="CommitModel">
+        select * from ${tableName}
+        <where>
+            commit_submit_date >= #{since}
+        </where>
+        order by commit_submit_date asc
+    </select>
 </mapper>
