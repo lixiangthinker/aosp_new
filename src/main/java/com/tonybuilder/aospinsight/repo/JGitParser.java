@@ -22,9 +22,6 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -131,7 +128,7 @@ public class JGitParser {
         String projectDir = getProjectDirByName(projectName);
         File dir = new File(projectDir);
         if (!dir.exists() || !dir.isDirectory()) {
-            System.out.println("project dir is not exist: " + projectName);
+            System.out.println("project dir is not exist: " + projectName + " dir " + dir);
             return result;
         }
 
@@ -183,81 +180,5 @@ public class JGitParser {
             e.printStackTrace();
         }
         return repo;
-    }
-
-    public static Repository openJGitRepository() throws IOException {
-        FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        File dir = new File("D:\\source\\aosp\\frameworks\\base\\.git\\");
-        return builder.setGitDir(dir)
-                .readEnvironment() // scan environment GIT_* variables
-                .findGitDir() // scan up the file system tree
-                .build();
-    }
-
-    public static void main(String[] args) throws IOException, GitAPIException {
-        try (Repository repository = JGitParser.openJGitRepository()) {
-            try (Git git = new Git(repository)) {
-                LogCommand cmd = git.log().setRevFilter(RevFilter.NO_MERGES);
-                Iterable<RevCommit> logs = cmd.call();
-
-                int count = 0;
-                ObjectId oldId = null;
-                ObjectId newId = null;
-                for (RevCommit rev : logs) {
-                    if (count < 10) {
-
-                        LocalDateTime localDateTime =
-                                LocalDateTime.ofInstant(Instant.ofEpochMilli(rev.getCommitTime()), ZoneId.systemDefault());
-                        newId = rev.getTree().getId();
-                        oldId = rev.getParent(0).getTree().getId();
-
-                        PersonIdent authorIndent = rev.getAuthorIdent();
-                        //PersonIdent commiterIndent = rev.getCommitterIdent();
-                        System.out.println("author date" + authorIndent.getWhen());
-                        System.out.println("author time zone" + authorIndent.getTimeZone());
-                        System.out.println("author time zone offset" + authorIndent.getTimeZoneOffset());
-                        //c.setCommitAlterDate(authorIndent.getWhen());
-
-                        System.out.println("AuthorIdent: " + rev.getAuthorIdent());
-                        System.out.println("CommitterIdent: " + rev.getCommitterIdent());
-                        System.out.println("CommitTime: " + rev.getCommitTime());
-                        System.out.println("CommitTime changed:" + localDateTime);
-                        System.out.println("FullMessage: " + rev.getFullMessage());
-                        System.out.println("ShortMessage: " + rev.getShortMessage());
-                        System.out.println("Id: " + rev.getId().getName());
-                        System.out.println("Tree id " + rev.getTree().getId());
-                        System.out.println("oldId = " + oldId);
-                        System.out.println("newId = " + newId);
-                        //System.out.println();
-
-                        if(oldId != null){
-                            System.out.println("Printing diff between tree: " + oldId + " and " + newId);
-
-                            DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
-                            df.setRepository(repository);
-                            df.setDiffComparator(RawTextComparator.DEFAULT);
-                            df.setDetectRenames(true);
-                            List<DiffEntry> diffs = df.scan(oldId, newId);
-                            int filesChanged = diffs.size();
-
-                            int linesAdded = 0;
-                            int linesDeleted = 0;
-
-                            for (DiffEntry diff : diffs) {
-                                for (Edit edit : df.toFileHeader(diff).toEditList()) {
-                                    linesDeleted += edit.getEndA() - edit.getBeginA();
-                                    linesAdded += edit.getEndB() - edit.getBeginB();
-                                }
-                            }
-
-                            System.out.println("files changed = " + filesChanged + " linesDeleted = " + linesDeleted + " linesAdded = " + linesAdded);
-                            System.out.println("===============================================");
-                        }
-                    }
-                    count++;
-                }
-                System.out.println("Had " + count + " commits overall on current branch");
-            }
-        }
     }
 }
