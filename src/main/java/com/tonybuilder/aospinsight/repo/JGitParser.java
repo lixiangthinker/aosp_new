@@ -73,18 +73,6 @@ public class JGitParser {
         return c;
     }
 
-    private class NumStatInfo{
-        int changedFiles;
-        int inserted;
-        int deleted;
-
-        NumStatInfo() {
-            changedFiles = 0;
-            inserted = 0;
-            deleted = 0;
-        }
-    }
-
     private NumStatInfo getNumStatInfo(@NotNull Repository repository, @NotNull RevCommit rev) throws IOException {
         NumStatInfo numStatInfo = new NumStatInfo();
 
@@ -100,11 +88,11 @@ public class JGitParser {
             df.setDetectRenames(true);
             List<DiffEntry> diffs = df.scan(oldId, newId);
 
-            numStatInfo.changedFiles = diffs.size();
+            numStatInfo.setChangedFiles(diffs.size());
             for (DiffEntry diff : diffs) {
                 for (Edit edit : df.toFileHeader(diff).toEditList()) {
-                    numStatInfo.deleted += edit.getEndA() - edit.getBeginA();
-                    numStatInfo.inserted += edit.getEndB() - edit.getBeginB();
+                    numStatInfo.addDeleted(edit.getEndA() - edit.getBeginA());
+                    numStatInfo.addInserted(edit.getEndB() - edit.getBeginB());
                 }
             }
         }
@@ -154,9 +142,9 @@ public class JGitParser {
                     c = getCommitFromRevCommit(rev);
 
                     NumStatInfo numStatInfo = getNumStatInfo(repository, rev);
-                    c.setCommitAddedLines(numStatInfo.inserted);
-                    c.setCommitDeletedLines(numStatInfo.deleted);
-                    c.setCommitChangedLines(numStatInfo.inserted + numStatInfo.deleted);
+                    c.setCommitAddedLines(numStatInfo.getInserted());
+                    c.setCommitDeletedLines(numStatInfo.getDeleted());
+                    c.setCommitChangedLines(numStatInfo.getChangedLines());
                     result.add(c);
                     count++;
                 }
