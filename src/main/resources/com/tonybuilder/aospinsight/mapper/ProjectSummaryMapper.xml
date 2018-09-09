@@ -11,8 +11,7 @@
             `project_summary_since` datetime DEFAULT NULL,
             `project_summary_until` datetime DEFAULT NULL,
             PRIMARY KEY (`project_summary_id`),
-            UNIQUE KEY `project_summary_since_UNIQUE` (`project_summary_since`),
-            UNIQUE KEY `project_summary_until_UNIQUE` (`project_summary_until`)
+            UNIQUE KEY `project_summary_since_UNIQUE` (`project_summary_since`, `project_summary_orig_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 	</update>
 
