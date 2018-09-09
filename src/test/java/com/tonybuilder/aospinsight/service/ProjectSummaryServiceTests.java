@@ -84,4 +84,13 @@ public class ProjectSummaryServiceTests {
         boolean result = projectSummaryService.genProjectSummary("platform/frameworks/base", since, until);
         Assert.assertEquals(true, result);
     }
+
+    @Test
+    public void testGenProjectSummaryForAll() {
+        YearMonth since = YearMonth.of(2017, 1);
+        YearMonth until = YearMonth.now();
+
+        boolean result = projectSummaryService.genProjectSummary(since, until);
+        Assert.assertEquals(true, result);
+    }
 }
