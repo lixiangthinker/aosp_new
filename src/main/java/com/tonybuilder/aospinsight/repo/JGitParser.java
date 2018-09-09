@@ -53,11 +53,24 @@ public class JGitParser {
         projectDir = SOURCE_BASE+strProjectPath+File.separator+".git"+File.separator;
         return projectDir;
     }
-
+    /**
+     * emoji表情替换
+     *
+     * @param source  原字符串
+     * @param slipStr emoji表情替换成的字符串
+     * @return 过滤后的字符串
+     */
+    private String filterEmoji(String source, String slipStr) {
+        if (source != null) {
+            return source.replaceAll("[\\ud800\\udc00-\\udbff\\udfff\\ud800-\\udfff]", slipStr);
+        } else {
+            return null;
+        }
+    }
     private CommitModel getCommitFromRevCommit(RevCommit rev) {
         CommitModel c = new CommitModel();
         c.setCommitHashId(rev.getId().getName());
-        c.setCommitLog(rev.getFullMessage());
+        c.setCommitLog(filterEmoji(rev.getFullMessage(), " "));
 
         PersonIdent authorIndent = rev.getAuthorIdent();
         c.setCommitAuthor(authorIndent.getName());
