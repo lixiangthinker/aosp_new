@@ -11,6 +11,8 @@ public interface ProjectSummaryMapper {
     Integer dropTable(@Param("tableName") String tableName);
     Integer existTable(String tableName);
     List<ProjectSummaryModel> getProjectSummaryByDate(@Param("since") Date since, @Param("until") Date until);
-    List<ProjectSummaryModel> getProjectSummary();
+    List<ProjectSummaryModel> getProjectSummaryByProjectId(@Param("projectId") int projectId,
+                                                           @Param("since") Date since,
+                                                           @Param("until") Date until);
     Integer addProjectSummaryList(@Param("projectSummaryList") List<ProjectSummaryModel> projectSummaryList);
 }

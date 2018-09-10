@@ -31,8 +31,8 @@ public class ProjectSummaryService {
         return projectSummaryMapper.getProjectSummaryByDate(since, until);
     }
 
-    public List<ProjectSummaryModel> getProjectSummary() {
-        return projectSummaryMapper.getProjectSummary();
+    public List<ProjectSummaryModel> getProjectSummary(int projectId, Date since, Date until) {
+        return projectSummaryMapper.getProjectSummaryByProjectId(projectId, since, until);
     }
 
     public boolean genProjectSummary(String projectName, YearMonth since, YearMonth until){

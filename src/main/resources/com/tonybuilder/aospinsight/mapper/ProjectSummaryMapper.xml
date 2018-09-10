@@ -42,6 +42,14 @@
         <![CDATA[ select * from tbl_project_summary where project_summary_since >=#{since} and project_summary_until <=#{until}]]>
     </select>
 
+    <select id="getProjectSummaryByProjectId" resultType="ProjectSummaryModel">
+        select * from tbl_project_summary
+        <where>
+            <![CDATA[project_summary_since >=#{since} and project_summary_until <=#{until}
+                                                      and project_summary_orig_id = #{projectId}]]>
+        </where>
+    </select>
+
     <select id="getProjectSummary" resultType="ProjectSummaryModel">
         select * from tbl_project_summary
     </select>
