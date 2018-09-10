@@ -5,6 +5,8 @@ import com.tonybuilder.aospinsight.mapper.ProjectSummaryMapper;
 import com.tonybuilder.aospinsight.model.ProjectModel;
 import com.tonybuilder.aospinsight.model.ProjectSummaryModel;
 import com.tonybuilder.aospinsight.repo.ProjectSummaryGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Service
 public class ProjectSummaryService {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectSummaryService.class);
     private ProjectMapper projectMapper;
     private ProjectSummaryMapper projectSummaryMapper;
     private ProjectSummaryGenerator projectSummaryGenerator;
@@ -42,7 +45,7 @@ public class ProjectSummaryService {
     public boolean genProjectSummary(YearMonth since, YearMonth until) {
         List<ProjectModel> projectList = projectMapper.getProjectList();
         if (projectList == null) {
-            System.out.println("could not get project list");
+            logger.info("could not get project list");
             return false;
         }
         boolean result = false;
@@ -51,10 +54,10 @@ public class ProjectSummaryService {
             String projectName = project.getProjectName();
             result = projectSummaryGenerator.genProjectSummaryForSingleProject(projectName, since, until);
             if (!result) {
-                System.out.println("could not generate project summary for " + projectName);
+                logger.info("could not generate project summary for " + projectName);
                 return false;
             } else {
-                System.out.println("project summary gerated, projectName = " + projectName
+                logger.info("project summary gerated, projectName = " + projectName
                         + " since = " + since + " until = " + until);
             }
         }

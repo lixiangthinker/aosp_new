@@ -4,6 +4,8 @@ import com.tonybuilder.aospinsight.model.CommitModel;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -17,13 +19,13 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class JGitParserTests {
-
+    private static final Logger logger = LoggerFactory.getLogger(JGitParserTests.class);
     @Autowired
     private JGitParser jGitParser;
     @Test
     public void testGetProjectFile() {
         String dir = jGitParser.getProjectDirByName("platform/frameworks/base");
-        System.out.println(dir);
+        logger.info(dir);
     }
     @Test
     public void testParseProject() {
@@ -37,7 +39,7 @@ public class JGitParserTests {
         }
 
         if (result != null) {
-            System.out.println("result " + result.size());
+            logger.info("result " + result.size());
         }
     }
     @Test
@@ -57,7 +59,7 @@ public class JGitParserTests {
         }
 
         if (result != null) {
-            System.out.println("result " + result.size());
+            logger.info("result " + result.size());
         }
     }
 }

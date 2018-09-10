@@ -2,6 +2,8 @@ package com.tonybuilder.aospinsight.api;
 
 import com.tonybuilder.aospinsight.model.ProjectSummaryModel;
 import com.tonybuilder.aospinsight.service.ProjectSummaryService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,31 +15,29 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/projectSummary")
 public class ProjectSummaryApi {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectSummaryApi.class);
     private ProjectSummaryService projectSummaryService;
 
     @Autowired
     public ProjectSummaryApi(ProjectSummaryService service) {
         this.projectSummaryService = service;
     }
-//    @PostMapping("")
-//    public Object getProjecSummary(@RequestBody ProjectModel projectModel) {
-//        return projectSummaryService.getProjectSummaryByName(projectModel);
-//    }
 
     @GetMapping("/{projectId}")
-    public Api getProjecSummary(@PathVariable int projectId) {
-        return getProjecSummary(projectId, null, null);
+    public Api getProjectSummary(@PathVariable int projectId) {
+        return getProjectSummary(projectId, null, null);
     }
 
     @GetMapping("/{projectId}/{since}")
-    public Api getProjecSummary(@PathVariable int projectId, @PathVariable String since) {
-        return getProjecSummary(projectId, since, null);
+    public Api getProjectSummary(@PathVariable int projectId, @PathVariable String since) {
+        return getProjectSummary(projectId, since, null);
     }
 
     @GetMapping("/{projectId}/{since}/{until}")
-    public Api getProjecSummary(@PathVariable int projectId,
+    public Api getProjectSummary(@PathVariable int projectId,
                                 @PathVariable String since,
                                 @PathVariable String until) {
+        logger.info("projectId = " + projectId + " since = " + since + " until = " + until);
         List<ProjectSummaryModel> result;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date sinceDate;
@@ -59,10 +59,6 @@ public class ProjectSummaryApi {
 
         if (result == null) {
             return Api.resourceNotFound("could not find data for project " + projectId);
-        }
-
-        for (ProjectSummaryModel projectSummaryModel : result) {
-            System.out.println("since " + projectSummaryModel.getProjectSummarySince());
         }
         return Api.ok(result);
     }

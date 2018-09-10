@@ -1,10 +1,13 @@
 package com.tonybuilder.aospinsight.mapper;
 
 import com.tonybuilder.aospinsight.model.ProjectModel;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
+@Mapper
 public interface ProjectMapper {
     Integer createNewTable(@Param("tableName") String tableName);
     Integer dropTable(@Param("tableName") String tableName);

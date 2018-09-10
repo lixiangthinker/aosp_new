@@ -1,14 +1,14 @@
 package com.tonybuilder.aospinsight.service;
 
-import com.tonybuilder.aospinsight.model.ProjectModel;
 import com.tonybuilder.aospinsight.model.ProjectSummaryModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.YearMonth;
@@ -19,7 +19,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ProjectSummaryServiceTests {
-
+    private static final Logger logger = LoggerFactory.getLogger(ProjectSummaryServiceTests.class);
     @Autowired
     private ProjectSummaryService projectSummaryService;
 
@@ -47,7 +47,7 @@ public class ProjectSummaryServiceTests {
     @Test
     public void testGetProjectSummary() {
 //        List<ProjectSummaryModel> result = projectSummaryService.getProjectSummary();
-//        System.out.println("result.size() = " + result.size());
+//        logger.info("result.size() = " + result.size());
 //        Assert.assertNotEquals(-1, result.size());
     }
 
@@ -66,14 +66,14 @@ public class ProjectSummaryServiceTests {
         calendarUntil.set(Calendar.MONTH, Calendar.MAY);
         calendarUntil.set(Calendar.DATE, 5);
         Date until = calendarUntil.getTime();
-        System.out.println("since: " + since);
-        System.out.println("until: " + until);
+        logger.info("since: " + since);
+        logger.info("until: " + until);
 
         List<ProjectSummaryModel> result = projectSummaryService.getProjectSummaryByDate(since, until);
 
         Assert.assertNotNull(result);
         for (ProjectSummaryModel p : result) {
-            System.out.println("since = " + p.getProjectSummarySince() + " until = " + p.getProjectSummaryUntil());
+            logger.info("since = " + p.getProjectSummarySince() + " until = " + p.getProjectSummaryUntil());
         }
     }
 

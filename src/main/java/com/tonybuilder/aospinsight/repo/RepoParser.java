@@ -36,7 +36,7 @@ public class RepoParser {
                 if (!"project".equals(element.getName())) {
                     continue;
                 }
-                //System.out.println("Element: " + element.getName());
+                //logger.info("Element: " + element.getName());
 
                 ProjectModel project = new ProjectModel();
 
@@ -48,7 +48,7 @@ public class RepoParser {
                     } else if ("name".equals(a.getName())) {
                         project.setProjectName(a.getValue());
                     }
-                    //System.out.println("Attribute: ["+a.getName()+","+a.getValue()+"]");
+                    //logger.info("Attribute: ["+a.getName()+","+a.getValue()+"]");
                 }
                 project.setProjectIsExternalSrc(isExternalProject(project));
                 project.setProjectIsDiscarded(isProjectDiscarded(project));

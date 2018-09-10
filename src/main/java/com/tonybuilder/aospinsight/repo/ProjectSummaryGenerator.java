@@ -6,6 +6,8 @@ import com.tonybuilder.aospinsight.mapper.ProjectSummaryMapper;
 import com.tonybuilder.aospinsight.model.CommitModel;
 import com.tonybuilder.aospinsight.model.ProjectModel;
 import com.tonybuilder.aospinsight.model.ProjectSummaryModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,7 @@ import java.util.List;
 
 @Component
 public class ProjectSummaryGenerator {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectSummaryGenerator.class);
     private CommitMapper commitMapper;
     private ProjectSummaryMapper projectSummaryMapper;
     private ProjectMapper projectMapper;
@@ -42,7 +45,7 @@ public class ProjectSummaryGenerator {
         checkProjectSummaryTable();
         ProjectModel project = projectMapper.getProjectByName(strProject);
         if (project == null) {
-            System.out.println("could not get project " + strProject);
+            logger.info("could not get project " + strProject);
             return false;
         }
         int projectId = project.getProjectId();
@@ -58,7 +61,7 @@ public class ProjectSummaryGenerator {
                     tableName);
 
             if (commitList == null) {
-                System.out.println("could not find commits in month: " + month);
+                logger.info("could not find commits in month: " + month);
                 continue;
             }
 
@@ -67,7 +70,7 @@ public class ProjectSummaryGenerator {
                 numStatInfo.addInserted(c.getCommitAddedLines());
                 numStatInfo.addDeleted(c.getCommitDeletedLines());
             }
-            System.out.println("genProjectSummaryForSingleProject month = " + month
+            logger.info("genProjectSummaryForSingleProject month = " + month
                     + " commits = " + commitList.size() + " inserted = " + numStatInfo.getInserted()
                     + " deleted = " + numStatInfo.getDeleted());
 

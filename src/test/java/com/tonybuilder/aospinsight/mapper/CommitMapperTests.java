@@ -5,13 +5,13 @@ import com.tonybuilder.aospinsight.repo.DateTimeUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.ZoneId;
@@ -24,6 +24,7 @@ import java.util.Locale;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CommitMapperTests {
+    private static final Logger logger = LoggerFactory.getLogger(CommitMapperTests.class);
     private static final String TEST_TABLE = "tbl_commit_frameworks_base";
     @Autowired
     CommitMapper mapper;
@@ -36,7 +37,7 @@ public class CommitMapperTests {
     @Test
     public void testCreateTable() {
         int result = mapper.createNewTable(TEST_TABLE);
-        System.out.println("result = " + result);
+        logger.info("result = " + result);
         Assert.assertEquals(1, (int)mapper.existTable(TEST_TABLE));
     }
 
@@ -49,9 +50,9 @@ public class CommitMapperTests {
     private Timestamp parseStringDate(String strDate) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("EEE MMM d HH:mm:ss yyyy Z", Locale.ENGLISH);
         LocalDateTime dateTime = LocalDateTime.parse(strDate, dateTimeFormatter);
-        System.out.println("dateTime = " + dateTime);
+        logger.info("dateTime = " + dateTime);
         Timestamp timestamp = Timestamp.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
-        System.out.println("timestamp = " + timestamp);
+        logger.info("timestamp = " + timestamp);
         return timestamp;
     }
     private CommitModel getCommit() {
@@ -109,15 +110,15 @@ public class CommitMapperTests {
     public void testGetCommitSince(){
         YearMonth yearMonth = YearMonth.of(2018, 8);
         Date since = DateTimeUtils.getDateFromYearMonth(yearMonth);
-        System.out.println("since = " + since);
+        logger.info("since = " + since);
         List<CommitModel> result = mapper.getCommitsSince(since, TEST_TABLE);
         if (result == null) {
-            System.out.println("could not get commit");
+            logger.info("could not get commit");
             return;
         }
-        System.out.println(result.size() + " results");
+        logger.info(result.size() + " results");
         for (CommitModel c: result) {
-            System.out.println(c.getCommitSubmitDate());
+            logger.info(c.getCommitSubmitDate().toString());
         }
     }
 }

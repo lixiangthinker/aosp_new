@@ -4,6 +4,8 @@ import com.tonybuilder.aospinsight.model.ProjectSummaryModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -16,6 +18,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ProjectSummaryMapperTests {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectSummaryMapperTests.class);
     private static final String TEST_TABLE = "tbl_project_summary";
     @Autowired
     ProjectSummaryMapper mapper;
@@ -32,7 +35,7 @@ public class ProjectSummaryMapperTests {
     public void testCreateTable() {
         Assert.assertNotNull(mapper);
         int result = mapper.createNewTable(TEST_TABLE);
-        System.out.println("result = " + result);
+        logger.info("result = " + result);
         Assert.assertEquals(1, (int) mapper.existTable(TEST_TABLE));
         result = mapper.dropTable(TEST_TABLE);
         Assert.assertEquals(0, result);
@@ -55,7 +58,7 @@ public class ProjectSummaryMapperTests {
         List<ProjectSummaryModel> result = mapper.getProjectSummaryByProjectId(projectId, sinceDate, untilDate);
         Assert.assertNotNull(result);
         for (ProjectSummaryModel project: result) {
-            System.out.println("project " + project.getProjectSummaryOrigId() + " since " + project.getProjectSummarySince());
+            logger.info("project " + project.getProjectSummaryOrigId() + " since " + project.getProjectSummarySince());
         }
     }
 }

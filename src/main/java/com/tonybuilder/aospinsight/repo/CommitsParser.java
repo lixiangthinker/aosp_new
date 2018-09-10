@@ -5,6 +5,8 @@ import com.tonybuilder.aospinsight.mapper.ProjectMapper;
 import com.tonybuilder.aospinsight.model.CommitModel;
 import com.tonybuilder.aospinsight.model.ProjectModel;
 import com.tonybuilder.aospinsight.utils.GlobalSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -41,6 +43,7 @@ packages/SystemUI/src/com/android/systemui/doze/DozeUi.java | 3 +--
 */
 @Component
 public class CommitsParser {
+    private static final Logger logger = LoggerFactory.getLogger(CommitsParser.class);
     private CommitMapper commitMapper;
     private ProjectMapper projectMapper;
     @Value("${aosp.source.root}")
@@ -54,12 +57,12 @@ public class CommitsParser {
 
     private boolean genProjectGitLogSince(String path, String since) {
         if (path == null || since == null) {
-            System.out.println("invalid path or since date");
+            logger.error("invalid path or since date");
             return false;
         }
 
         LocalDate sinceDate = LocalDate.parse(since, DateTimeFormatter.ISO_DATE);
-        System.out.println("genProjectGitLogSince sinceDate: " + sinceDate + " project: " + path);
+        logger.info("genProjectGitLogSince sinceDate: " + sinceDate + " project: " + path);
 
         File projectDir = new File(sourceRoot, path);
 
@@ -68,7 +71,7 @@ public class CommitsParser {
                 "git log --pretty=fuller --no-merges " +
                         "--since=" + sinceDate + " " +
                         "--stat > " + cacheFileName};
-        System.out.println("genProjectGitLogSince cmd: " + cmd[2]);
+        logger.info("genProjectGitLogSince cmd: " + cmd[2]);
         Runtime runtime = Runtime.getRuntime();
 
         Process process;
@@ -216,7 +219,7 @@ public class CommitsParser {
     }
 
     private List<CommitModel> parseGitLog(File gitLog) {
-        System.out.println("parseGitLog " + gitLog.getName());
+        logger.info("parseGitLog " + gitLog.getName());
         List<CommitModel> result = new ArrayList<>();
         try (BufferedReader gitLogReader = new BufferedReader(new FileReader(gitLog))) {
             String line;
@@ -296,7 +299,7 @@ public class CommitsParser {
                     case PARSING_TOTAL_LINES:
                         break;
                     default:
-                        System.out.println("error parsing state: " + line);
+                        logger.info("error parsing state: " + line);
                         break;
                 }
             }
@@ -322,17 +325,17 @@ public class CommitsParser {
     }
 
     private List<CommitModel> parseProjectLog(String path) {
-        System.out.println("parseProjectLog path " + path);
+        logger.info("parseProjectLog path " + path);
         List<CommitModel> result = new ArrayList<>();
 
         if (path == null) {
-            System.out.println("invalid git log cache path");
+            logger.info("invalid git log cache path");
             return result;
         }
 
         File projectDir = new File(sourceRoot, path);
         if (!projectDir.exists() || !projectDir.isDirectory()) {
-            System.out.println("project directory is invalid, path = " + path);
+            logger.info("project directory is invalid, path = " + path);
             return result;
         }
 
@@ -364,28 +367,28 @@ public class CommitsParser {
         /* get project list*/
         List<ProjectModel> projectEntityList = projectMapper.getProjectList();
         if (projectEntityList == null || projectEntityList.size() == 0) {
-            System.out.println("could not get project list");
+            logger.info("could not get project list");
             return result;
         }
 
         int totalProjects = projectEntityList.size();
         int currentProject = 0;
         for (ProjectModel p : projectEntityList) {
-            System.out.println("current " + currentProject + " totalProject " + totalProjects);
+            logger.info("current " + currentProject + " totalProject " + totalProjects);
             currentProject++;
             result = genProjectGitLogSince(p.getProjectPath(), since);
             if (!result) {
-                System.out.println("could not generate git log for " + p.getProjectPath());
+                logger.info("could not generate git log for " + p.getProjectPath());
                 continue;
             }
 
             if (p.getProjectIsExternalSrc() == 1) {
-                System.out.println("ignore external source");
+                logger.info("ignore external source");
                 continue;
             }
 
             if (p.getProjectModuleType() == GlobalSettings.PROJECT_CATEGORY_PREBUILTS) {
-                System.out.println("ignore prebuilts source");
+                logger.info("ignore prebuilts source");
                 continue;
             }
 
@@ -393,7 +396,7 @@ public class CommitsParser {
             String commitTableName = GlobalSettings.getCommitTableName(projectName);
             List<CommitModel> commitEntityList = parseProjectLog(p.getProjectPath());
             int projectId = projectMapper.getProjectIdByPath(p.getProjectPath());
-            System.out.println("commitEntityList.size = " + commitEntityList.size());
+            logger.info("commitEntityList.size = " + commitEntityList.size());
             for (CommitModel c : commitEntityList) {
                 c.setCommitInProject(projectId);
                 c.setCommitBranch("master");
@@ -407,7 +410,7 @@ public class CommitsParser {
     public static boolean cleanCache(File projectDir) {
         boolean result = false;
         if (projectDir == null || !projectDir.isDirectory()) {
-            System.out.println("cleanCache could not clean cache");
+            logger.info("cleanCache could not clean cache");
             return false;
         }
 
@@ -427,7 +430,7 @@ public class CommitsParser {
         boolean result = false;
         File projectDir = new File(sourceRoot, path);
         if (!projectDir.exists() || !projectDir.isDirectory()) {
-            System.out.println("project directory is invalid, path = " + path);
+            logger.info("project directory is invalid, path = " + path);
             return false;
         }
 
@@ -436,14 +439,14 @@ public class CommitsParser {
 
             result = genProjectGitLogSince(path, since);
             if (!result) {
-                System.out.println("could not generate git log for " + path + " since " + since);
+                logger.info("could not generate git log for " + path + " since " + since);
                 return false;
             }
         }
 
         int projectId = projectMapper.getProjectIdByPath(path);
         List<CommitModel> commitEntityList = parseProjectLog(path);
-        System.out.println("path: " + path + " since: " + since + " commitEntityList.size = " + commitEntityList.size());
+        logger.info("path: " + path + " since: " + since + " commitEntityList.size = " + commitEntityList.size());
         for (CommitModel c : commitEntityList) {
             c.setCommitInProject(projectId);
             c.setCommitBranch("master");

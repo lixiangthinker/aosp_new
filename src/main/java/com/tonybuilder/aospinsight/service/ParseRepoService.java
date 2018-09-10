@@ -8,6 +8,8 @@ import com.tonybuilder.aospinsight.repo.JGitParser;
 import com.tonybuilder.aospinsight.repo.RepoParser;
 import com.tonybuilder.aospinsight.utils.GlobalSettings;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @Service
 public class ParseRepoService {
+    private static final Logger logger = LoggerFactory.getLogger(ParseRepoService.class);
     private ProjectMapper projectMapper;
     private RepoParser repoParser;
     private JGitParser jGitParser;
@@ -69,17 +72,17 @@ public class ParseRepoService {
         File manifest = new File(root, REPO_PATH);
 
         if (!manifest.exists() || !manifest.isFile()) {
-            System.out.println("could not find manifest file");
+            logger.info("could not find manifest file");
             return false;
         }
 
         // parse manifest, get project path and name
         List<ProjectModel> parseResult = repoParser.parserXml(manifest);
         for (ProjectModel p : parseResult) {
-            System.out.println("["+p.getProjectName()+", "+p.getProjectPath()+"]");
+            logger.info("["+p.getProjectName()+", "+p.getProjectPath()+"]");
         }
         projectMapper.addProjectList(parseResult);
-        System.out.println(parseResult.size() + " projects added to database");
+        logger.info(parseResult.size() + " projects added to database");
         return true;
     }
 
@@ -95,11 +98,11 @@ public class ParseRepoService {
             e.printStackTrace();
         }
         if (list == null) {
-            System.out.println("could not parse project " + projectName);
+            logger.info("could not parse project " + projectName);
             return false;
         }
 
-        System.out.println("list.size() " + list.size());
+        logger.info("list.size() " + list.size());
 
         int listSize = list.size();
         for (int begin = 0; begin < listSize; begin += 100) {

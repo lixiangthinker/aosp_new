@@ -15,6 +15,8 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +30,7 @@ import java.util.List;
 
 @Component
 public class JGitParser {
-
+    private static final Logger logger = LoggerFactory.getLogger(JGitParser.class);
     @Value("${aosp.source.root}")
     private String SOURCE_BASE;
     private String projectName;
@@ -94,7 +96,7 @@ public class JGitParser {
 
         // init node do not have any parents
         if (oldId != null) {
-            System.out.println("Diff id = " + rev.getId().getName() + " date = " + rev.getCommitterIdent().getWhen());
+            logger.info("Diff id = " + rev.getId().getName() + " date = " + rev.getCommitterIdent().getWhen());
             DiffFormatter df = new DiffFormatter(DisabledOutputStream.INSTANCE);
             df.setRepository(repository);
             df.setDiffComparator(RawTextComparator.DEFAULT);
@@ -129,7 +131,7 @@ public class JGitParser {
         String projectDir = getProjectDirByName(projectName);
         File dir = new File(projectDir);
         if (!dir.exists() || !dir.isDirectory()) {
-            System.out.println("project dir is not exist: " + projectName + " dir " + dir);
+            logger.info("project dir is not exist: " + projectName + " dir " + dir);
             return result;
         }
 
@@ -151,7 +153,7 @@ public class JGitParser {
                             break;
                         }
                     }
-                    System.out.println("count " + count);
+                    logger.info("count " + count);
                     c = getCommitFromRevCommit(rev);
 
                     NumStatInfo numStatInfo = getNumStatInfo(repository, rev);
@@ -161,7 +163,7 @@ public class JGitParser {
                     result.add(c);
                     count++;
                 }
-                System.out.println("Had " + count + " commits overall on current branch");
+                logger.info("Had " + count + " commits overall on current branch");
             }
         }
 

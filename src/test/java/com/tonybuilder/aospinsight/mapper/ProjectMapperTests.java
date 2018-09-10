@@ -4,9 +4,10 @@ import com.tonybuilder.aospinsight.model.ProjectModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ProjectMapperTests {
+    private static final Logger logger = LoggerFactory.getLogger(ProjectMapperTests.class);
     private static final String TEST_TABLE = "tbl_project";
     @Autowired
     ProjectMapper mapper;
@@ -30,7 +32,7 @@ public class ProjectMapperTests {
     public void testCreateTable() {
         Assert.assertNotNull(mapper);
         int result = mapper.createNewTable(TEST_TABLE);
-        System.out.println("result = " + result);
+        logger.info("result = " + result);
         Assert.assertEquals(1, (int) mapper.existTable(TEST_TABLE));
         result = mapper.dropTable(TEST_TABLE);
         Assert.assertEquals(0, result);
@@ -54,7 +56,7 @@ public class ProjectMapperTests {
         ProjectModel projectModel = getProjectModel("platform/frameworks/av",
                 "frameworks/av", (double) 3000);
         int result = mapper.addProject(projectModel);
-        System.out.println("result = " + result);
+        logger.info("result = " + result);
     }
 
     @Test
@@ -71,27 +73,27 @@ public class ProjectMapperTests {
         list.add(projectModel3);
 
         int result = mapper.addProjectList(list);
-        System.out.println("result = " + result);
+        logger.info("result = " + result);
     }
 
     @Test
     public void testGetProjectByPath() {
         ProjectModel result = mapper.getProjectByPath("frameworks/base");
-        System.out.println(result.getProjectName());
+        logger.info(result.getProjectName());
     }
 
     @Test
     public void testGetProjectList() {
         List<ProjectModel> result = mapper.getProjectList();
         for(ProjectModel p: result) {
-            System.out.println(p.getProjectName());
+            logger.info(p.getProjectName());
         }
     }
 
     @Test
     public void testGetProjectIdByPath() {
         Integer id = mapper.getProjectIdByPath("frameworks/base");
-        System.out.println("id = " + id);
+        logger.info("id = " + id);
         id = mapper.getProjectIdByPath("path/not/exist");
         Assert.assertNull(id);
     }
