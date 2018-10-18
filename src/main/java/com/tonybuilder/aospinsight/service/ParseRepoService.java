@@ -92,9 +92,7 @@ public class ParseRepoService {
         List<CommitModel> list = new ArrayList<>();
         try {
             list = jGitParser.parseProject(projectName, since);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GitAPIException e) {
+        } catch (IOException | GitAPIException e) {
             e.printStackTrace();
         }
         if (list == null) {

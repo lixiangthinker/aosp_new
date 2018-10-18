@@ -80,8 +80,8 @@ public class JGitParser {
         Timestamp timestamp = new Timestamp(authorIndent.getWhen().getTime());
         c.setCommitAlterDate(timestamp);
 
-        PersonIdent commiterIndent = rev.getCommitterIdent();
-        c.setCommitSubmitDate(new Timestamp(commiterIndent.getWhen().getTime()));
+        PersonIdent committerIndent = rev.getCommitterIdent();
+        c.setCommitSubmitDate(new Timestamp(committerIndent.getWhen().getTime()));
 
         c.setCommitBranch("master");
         c.setCommitInProject(-1);

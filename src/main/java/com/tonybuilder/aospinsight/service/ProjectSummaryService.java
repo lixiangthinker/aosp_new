@@ -48,16 +48,15 @@ public class ProjectSummaryService {
             logger.info("could not get project list");
             return false;
         }
-        boolean result = false;
 
         for (ProjectModel project : projectList) {
             String projectName = project.getProjectName();
-            result = projectSummaryGenerator.genProjectSummaryForSingleProject(projectName, since, until);
+            boolean result = projectSummaryGenerator.genProjectSummaryForSingleProject(projectName, since, until);
             if (!result) {
                 logger.info("could not generate project summary for " + projectName);
                 return false;
             } else {
-                logger.info("project summary gerated, projectName = " + projectName
+                logger.info("project summary generated, projectName = " + projectName
                         + " since = " + since + " until = " + until);
             }
         }
