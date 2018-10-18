@@ -105,6 +105,6 @@
         <where>
             <![CDATA[commit_submit_date >= #{since} and commit_submit_date < #{until}]]>
         </where>
-        order by commit_submit_date asc
+        order by commit_submit_date desc
     </select>
 </mapper>

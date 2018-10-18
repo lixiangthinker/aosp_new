@@ -1,5 +1,7 @@
 package com.tonybuilder.aospinsight.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.tonybuilder.aospinsight.mapper.CommitMapper;
 import com.tonybuilder.aospinsight.mapper.ProjectMapper;
 import com.tonybuilder.aospinsight.model.CommitModel;
@@ -46,5 +48,20 @@ public class CommitService {
         Timestamp[] time = DateTimeUtils.getSinceAndUntilTsByMonth(month);
         String tableName = GlobalSettings.getCommitTableName(projectName);
         return commitMapper.getCommitsSinceUntil(time[0],time[1],tableName);
+    }
+
+    public PageInfo<CommitModel> getPagedCommitsByMonth(int projectId, String strMonth, int pageIndex, int pageSize) {
+        logger.info("page index = " + pageIndex + " pageSize = " + pageSize);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM");
+        YearMonth yearMonth = YearMonth.parse(strMonth, dtf);
+
+        ProjectModel project = projectMapper.getProjectById(projectId);
+        if (project == null) {
+            throw new InvalidParameterException("invalid project id");
+        }
+        PageHelper.startPage(pageIndex, pageSize);
+        List<CommitModel> list = getCommitsByMonth(project.getProjectName(), yearMonth);
+        PageInfo<CommitModel> pageInfo = new PageInfo<>(list);
+        return  pageInfo;
     }
 }

@@ -1,5 +1,8 @@
 package com.tonybuilder.aospinsight.api;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Api {
     public static final String VERSION = "1.0.0";
     public static final int ERROR_CODE_NONE = 200;
@@ -11,16 +14,24 @@ public class Api {
     private String version;
     private Object payload;
     private String message;
+    private PagingInfo pageInfo;
 
     public Api(Object payload, int resultCode, String message, String version) {
         this.resultCode = resultCode;
         this.version = version;
         this.payload = payload;
         this.message = message;
+        this.pageInfo = null;
     }
 
     public static Api ok(Object payload) {
-        return new Api(payload, Api.ERROR_CODE_NONE, "OK",Api.VERSION);
+        return new Api(payload, Api.ERROR_CODE_NONE, "OK", Api.VERSION);
+    }
+
+    public static Api ok(Object payload, PagingInfo pageInfo) {
+        Api result = new Api(payload, Api.ERROR_CODE_NONE, "OK", Api.VERSION);
+        result.setPageInfo(pageInfo);
+        return result;
     }
 
     public static Api resourceNotFound(String message) {
@@ -65,5 +76,13 @@ public class Api {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public PagingInfo getPageInfo() {
+        return pageInfo;
+    }
+
+    public void setPageInfo(PagingInfo pageInfo) {
+        this.pageInfo = pageInfo;
     }
 }

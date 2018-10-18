@@ -1,5 +1,6 @@
 package com.tonybuilder.aospinsight.service;
 
+import com.github.pagehelper.PageInfo;
 import com.tonybuilder.aospinsight.model.CommitModel;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,6 +28,19 @@ public class CommitServiceTest {
         System.out.println("get "+ commits.size() + " commits");
         for (int i = 0; i < 10; i++) {
             System.out.println(commits.get(i).getCommitLog());
+        }
+    }
+
+    @Test
+    public void getPagedCommitsByMonth() {
+        PageInfo<CommitModel> commits = commitService.getPagedCommitsByMonth(390,
+                "2018-01", 1, 10);
+        Assert.assertNotNull(commits);
+        System.out.println("get commits " + commits);
+        List<CommitModel> modelList = commits.getList();
+        System.out.println("model list size = " + modelList.size());
+        for (CommitModel c : modelList){
+            System.out.println(c.getCommitSubmitDate());
         }
     }
 }

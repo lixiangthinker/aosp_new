@@ -27,4 +27,13 @@ public class CommitApiTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void getCommitByMonthPaged() {
+        RequestBuilder request = MockMvcRequestBuilders.get("/api/commit/390/2018-01/?pageIndex=1&&pageSize=10");
+        try {
+            this.mockMvc.perform(request).andDo(MockMvcResultHandlers.print());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
