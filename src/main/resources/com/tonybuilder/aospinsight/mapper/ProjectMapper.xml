@@ -65,6 +65,9 @@
     <select id="getProjectIdByPath" resultType="Integer">
         select project_id from tbl_project where project_path = #{path}
     </select>
+    <select id="getProjectById" resultType="ProjectModel">
+        select * from tbl_project where project_id = #{id}
+    </select>
     <select id="getProjectByPath" resultType="ProjectModel">
         select * from tbl_project where project_path = #{path}
     </select>

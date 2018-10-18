@@ -15,6 +15,7 @@ public interface ProjectMapper {
 
     ProjectModel getProjectByPath(@Param("path") String path);
     ProjectModel getProjectByName(@Param("projectName") String projectName);
+    ProjectModel getProjectById(@Param("id") Integer id);
     List<ProjectModel> getProjectList();
     Integer getProjectIdByPath(@Param("path") String path);
     Integer addProjectList(List<ProjectModel> projectList);
